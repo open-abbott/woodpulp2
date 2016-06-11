@@ -1,0 +1,88 @@
+#!/usr/bin/perl
+
+#------------------------------------------------------------------------------#
+#
+# WoodPulp2 Executor
+#
+# This is a helper utility that resides on a server that hosts a
+# WoodPulp2 site and executes commands for WoodPulp2, typically as a
+# result of an event triggered by cron.
+#
+# https://github.com/open-abbott/woodpulp2
+#
+#------------------------------------------------------------------------------#
+
+use strict;
+use warnings;
+
+use Data::Dumper;
+use Getopt::Long;
+
+my %command_options;
+my %commands = (
+
+    'delete' => {
+        'name' => 'Delete',
+        'description' => '',
+        'options' => [
+            'target=s',
+            'type=s',
+            'id=s',
+        ],
+        'action' => \&delete,
+    },
+
+    'publish' => {
+        'name' => 'Publish',
+        'description' => '',
+        'options' => [
+            'target=s',
+            'type=s',
+            'id=s',
+        ],
+        'action' => \&publish,
+    },
+
+);
+
+my $command_type = shift or die "No command\n";
+die "Invalid command\n" if !exists $commands{$command_type};
+my $command = $commands{$command_type};
+
+Getopt::Long::GetOptions(
+    (
+     map {
+         ( $_, \$command_options{get_opt_key($_)} )
+     } @{$command->{'options'}}
+    ),
+    'verbose|v' => \$command_options{'verbose'},
+);
+
+
+$command->{'action'}( %command_options );
+exit;
+
+sub get_opt_key {
+    my ( $spec ) = @_;
+    my @a = split /\=/, $spec;
+    my @b = split /\|/, $a[0];
+    return $b[0];
+}
+
+sub delete {
+    #
+    # Delete item type with id
+    #
+    # TODO Remove output
+    print "Delete done\n";
+}
+
+sub publish {
+    my ( %options ) = @_;
+    print Data::Dumper::Dumper( \%options );
+    #
+    # Move item type with id to target
+    #
+    # TODO Remove output
+    print "Publishing done\n";
+}

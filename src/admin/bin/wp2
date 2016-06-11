@@ -1,0 +1,52 @@
+#!/usr/bin/env node
+
+"use strict";
+
+var lib = {
+    coa: require( 'coa' ),
+    path: require( 'path' )
+};
+lib.pkg = require( lib.path.join( '..', 'package.json' ) )
+
+var local = {
+    config: require( lib.path.join( '..', 'lib', 'config' ) ),
+    server: require( lib.path.join( '..', 'lib', 'server' ) )
+};
+
+
+var cli = lib.coa.Cmd()
+    .helpful()
+    .name( lib.pkg.name )
+    .title( lib.pkg.description );
+
+cli.opt()
+    .name( 'verbose' ).title( 'Verbose' )
+    .long( 'verbose' )
+    .short( 'v' )
+    .flag()
+    .end();
+
+cli.opt()
+    .name( 'version' ).title( 'Version' )
+    .long( 'version' )
+    .short( 'V' )
+    .only()
+    .flag()
+    .act( function () {
+        return lib.pkg.version
+    } );
+
+cli.opt()
+    .name( 'config' ).title( 'Configuration' )
+    .long( 'config' )
+    .short( 'c' )
+    .end();
+
+cli.act( function ( opts, args ) {
+
+    var config = local.config.create( opts.config );
+    local.server.start( config );
+
+} );
+
+cli.run();

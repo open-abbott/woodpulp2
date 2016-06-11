@@ -1,0 +1,13 @@
+{
+    "name": "woodpulp2",
+    "description": "A web comic management system",
+    "version": "2.0.0",
+    "dependencies": {
+        "coa": "*",
+        "express": "*",
+        "express-handlebars": "*",
+        "extend": "*",
+        "https": "*",
+        "path": "*"
+    }
+}

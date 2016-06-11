@@ -1,0 +1,97 @@
+
+    WoodPulp 2
+
+
+Summary
+
+WoodPulp solved the problem of providing a dedicated CMS for comic
+strip delivery.  It operated entirely as a CGI application, with all
+the benefits and drawbacks associated.  This includes individual comic
+presentation as well as admin functionality.
+
+WoodPulp2 will use a differnent model to provide very similar
+functionality.  Instead of using a CGI application, it will rely on
+multiple components.
+
+  - Node.js client for administering and scheduling CMS events
+
+  - Server component for executing scheduled CMS events (likely Perl)
+
+  - Web presentation using client-side scripting (Javascript) to
+    obtain template and template fulfillment components as authored
+
+
+
+Design: Administration client
+
+This component will serve as the administration point of the system.
+It fulfills the following roles.
+
+  - Allow defining CMS events (e.g. publishing)
+
+  - Store CMS content
+
+  - Edit web presentation template
+
+Certain behaviors of the existing, server-side solution will need
+special consideration.  This includes storing tips for content streams
+such that auxiliary editors can make updates without access to the
+full content database.
+
+It could be handy to be able to download template components for the
+purposes of auxiliary editors to build content that uses existing
+templates.
+
+The core feature for WoodPulp, allowing parallel content streams, will
+need to be preserved.
+
+Use cases
+
+  - Create content for a new comic entry; this may include both the
+    image for the comic, itself, as well as ancillary content
+
+  - Schedule comic entry; selecting an authored entry and selecting a
+    date/time for publishing.  This may also trigger a sync event
+    wherein the comic entry is uploaded to the server and the
+    scheduling system (cron?) is configured to perform the publish at
+    an appropriate time
+
+  - Create a blog entry; this may include text as well as images or
+    other linked resources
+
+  - Schedule blog entry; selecting a blog entry and date/time for
+    publishing. This may also trigger a sync event.
+
+  - Preview content using available template
+
+  - Allow blog entry template(s)
+
+
+
+Design: Server execution component
+
+This component will handle moving content from a staging directory
+into the production hierarchy where it can be referenced.  It will be
+triggered by a server-side scheduler.  It may need to perform content
+stream tip management.
+
+Use cases
+
+  - Make comic strip available (adjust tip(s))
+
+  - Make blog entry available (adjust tip(s))
+
+  - Upsert web presentation template and resources
+
+
+
+Design: Web presentation
+
+Rather than rendering and delivering the pre-rendered pages (as in the
+current solution), a singular site template will be downloaded by web
+clients which will then be populated with resources to specialize the
+template.  This will include comic entry(ies) and blog entry(ies) as
+appropriate.
+
+Given the current Javascript MVC framework environment, React seems
+like the most appropriate choice for this work.
