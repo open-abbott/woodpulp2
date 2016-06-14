@@ -23,7 +23,7 @@ my %commands = (
 
     'delete' => {
         'name' => 'Delete',
-        'description' => '',
+        'description' => 'Delete a unit of content',
         'options' => [
             'target=s',
             'type=s',
@@ -32,9 +32,16 @@ my %commands = (
         'action' => \&delete,
     },
 
+    'help' => {
+        'name' => 'Help',
+        'description' => 'This content',
+        'options' => [],
+        'action' => \&help,
+    },
+
     'publish' => {
         'name' => 'Publish',
-        'description' => '',
+        'description' => 'Publish a staged unit of content',
         'options' => [
             'target=s',
             'type=s',
@@ -75,6 +82,15 @@ sub delete {
     #
     # TODO Remove output
     print "Delete done\n";
+}
+
+sub help {
+    print "Commands:\n\n";
+    print map {
+        $_
+            . ( $commands{$_}{'description'} ? "\t- $commands{$_}{'description'}" : "" )
+            . "\n"
+    } keys %commands;
 }
 
 sub publish {

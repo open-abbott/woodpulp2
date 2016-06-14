@@ -3,11 +3,12 @@
     "description": "A web comic management system",
     "version": "2.0.0",
     "dependencies": {
-        "coa": "*",
-        "express": "*",
-        "express-handlebars": "*",
-        "extend": "*",
-        "https": "*",
-        "path": "*"
+        "coa": "1.4.1",
+        "express": "4.13.4",
+        "express-handlebars": "3.0.0",
+        "extend": "3.0.0",
+        "https": "1.0.0",
+        "opener": "1.4.1",
+        "path": "0.12.7"
     }
 }

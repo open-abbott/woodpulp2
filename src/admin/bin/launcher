@@ -1,0 +1,22 @@
+#!/usr/bin/env node
+
+"use strict";
+
+var lib = {
+    opener: require( 'opener' ),
+    path: require( 'path' )
+};
+lib.pkg = require( lib.path.join( '..', 'package.json' ) )
+
+var local = {
+    config: require( lib.path.join( '..', 'lib', 'config' ) ),
+    server: require( lib.path.join( '..', 'lib', 'server' ) )
+};
+
+
+var config = local.config.create();
+local.server.start( config );
+
+var url = "http://localhost:" + config.get( 'port' );
+console.log( url );
+lib.opener( url );
