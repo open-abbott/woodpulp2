@@ -2,30 +2,71 @@
 
 var lib = {
     express: require( 'express' ),
-    exphbs: require( 'express-handlebars' )
+    exphbs: require( 'express-handlebars' ),
+    path: require( 'path' )
 };
+
+var local = {
+    routers: [
+        'page',
+        'comic',
+        'note',
+        'strip',
+        'user'
+    ].map( function ( name ) {
+        return require( lib.path.join( '..', 'routers', name ) );
+    } )
+};
+
+
+function Server() {
+    this.started = false;
+    this.config = null;
+    this.port = null;
+    this.app = null;
+    this.hbs = null;
+}
+Server.prototype.start = function ( config ) {
+
+    if ( this.started ) {
+        throw new Error( "Server is already started" );
+    }
+
+    this.started = true;
+
+    this.config = config;
+    this.port = config.get( 'port' );
+
+    this.app = lib.express();
+    this.hbs = lib.exphbs.create( {
+        defaultLayout: "main"
+    } );
+
+    this.app.engine( 'handlebars', this.hbs.engine );
+    this.app.set( 'view engine', 'handlebars' );
+
+};
+Server.prototype.listen = function () {
+    this.app.listen( this.port );
+};
+
+
+var server = new Server();
+
 
 module.exports = {
 
     start: function ( config ) {
 
-        var port = config.get( 'port' );
-        var app = lib.express();
-        var hbs = lib.exphbs.create( {
-            defaultLayout: "main"
+        server.start( config );
+
+        local.routers.forEach( function ( router ) {
+            router.register( server );
         } );
 
-        app.engine( 'handlebars', hbs.engine );
-        app.set( 'view engine', 'handlebars' );
+        server.listen();
 
-        app.get( '/', function ( request, response ) {
-            response.render( 'home' );
-        } );
-
-        app.listen( port, function () {
-        } );
-
-        console.log( "WoodPulp2 Admin Console running on localhost:" + port );
+        console.log( "WoodPulp2 Admin Console running on localhost:" + server.port );
 
     }
 
